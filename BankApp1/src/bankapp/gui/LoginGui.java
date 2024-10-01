@@ -7,12 +7,14 @@ package bankapp.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.*;
 import obj.MyJDBC;
 import obj.User;
 
 
-public class LoginGui extends BaseFrame
+public class LoginGui extends BaseFrame 
 {
     public LoginGui()
     {
@@ -83,6 +85,14 @@ public class LoginGui extends BaseFrame
         JLabel registerLabel=new JLabel("<html><a href=\"#\">If you do not have account, click here! ");
         registerLabel.setBounds(super.getWidth()/2-180,super.getHeight()-150,super.getWidth(), 40);
         registerLabel.setFont(new Font("Dialog",Font.BOLD,20));
+        registerLabel.addMouseListener(new MouseAdapter()
+        {
+            @Override public void mouseClicked(MouseEvent e)
+            {
+               LoginGui.this.dispose();
+               new RegisterGui().setVisible(true);
+            }
+        });
         add(registerLabel);
     }
 }

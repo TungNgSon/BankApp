@@ -50,12 +50,13 @@ public class MyJDBC {
             {
                 int curr=countCus();
                 Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
-                PreparedStatement ppst= cnt.prepareStatement("INSERT INTO customer(id,username,pass) VALUES(?,?,?)");
+                PreparedStatement ppst= cnt.prepareStatement("INSERT INTO customer(id,username,pass,balance) VALUES(?,?,?,?)");
                 ppst.setInt(1, curr+1);
                 ppst.setString(2, username);
                 ppst.setString(3, password);
+                ppst.setBigDecimal(4, BigDecimal.ZERO);
                 int rowsAffected = ppst.executeUpdate(); // Sửa thành executeUpdate()
-                System.out.println("Rows affected: " + rowsAffected); // In ra số dòng bị ảnh hưởng
+                
                 return true;
             }
         }
@@ -106,6 +107,98 @@ public class MyJDBC {
             
         }
         return cnt;
+    }
+    public static boolean addTransaction(Transaction transaction)
+    {
+        try
+        {
+            Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
+            int Trans=countTrans();
+            PreparedStatement ppst=cnt.prepareStatement("INSERT INTO transaction(trans_id,user_id,trans_type,trans_amount,trans_date) VALUES(?,?,?,?,NOW())");
+            ppst.setInt(1, Trans+1);
+            ppst.setInt(2, transaction.getUserId());
+            ppst.setString(3,transaction.getTrans_type());
+            ppst.setBigDecimal(4, transaction.getTrans_amount());
+            ppst.executeUpdate();
+            return true;
+        
+        }
+        
+        catch(SQLException e)
+        {
+            
+        }
+        return false;
+    }
+    public static int countTrans()
+    {
+        int cnt=0;
+        try
+        {
+            Connection connection=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
+            PreparedStatement ppst=connection.prepareStatement("SELECT COUNT(*) FROM transaction");
+            ResultSet rs=ppst.executeQuery();
+            if(rs.next())
+            {
+                cnt=rs.getInt(1);
+            }
+        }
+        catch(SQLException e)
+        {   
+            
+        }
+        return cnt;
+    }
+    public static boolean updateBalance(User user)
+    {
+        try
+        {
+            Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
+            PreparedStatement ppst=cnt.prepareStatement("UPDATE customer Set balance=? WHERE id = ?");
+            ppst.setBigDecimal(1, user.getCurrentBalance());
+            ppst.setInt(2, user.getId());
+            ppst.executeUpdate();
+            return true;
+        }
+        catch(SQLException e)
+        {
+            
+        }
+        return false;
+    }
+    public static boolean transfer(User user,String transferUsername,float amount)
+    {
+        try
+        {
+            Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
+            PreparedStatement ppst=cnt.prepareStatement("SELECT * FROM customer WHERE username=?");
+            ppst.setString(1, transferUsername);
+            ResultSet rs=ppst.executeQuery();
+            while(rs.next())
+            {
+                int userId=rs.getInt("id");
+                String password=rs.getString("pass");
+                BigDecimal balance=rs.getBigDecimal("balance");
+                User transferUser=new User(userId,transferUsername,password,balance);
+                Transaction sentTrans=new Transaction(user.getId(),"Transfer",BigDecimal.valueOf(-amount),null);
+                Transaction reTrans=new Transaction(userId,"Transfer",BigDecimal.valueOf(amount),null);
+                //update receiver
+                transferUser.setcurrentBalance(transferUser.getCurrentBalance().add(BigDecimal.valueOf(amount)));
+                updateBalance(transferUser);
+                //update sendUser
+                user.setcurrentBalance(user.getCurrentBalance().subtract(BigDecimal.valueOf(amount)));
+                updateBalance(user);
+                //add these Transaction to Database
+                addTransaction(sentTrans);
+                addTransaction(reTrans);
+                return true;
+            }
+        }
+        catch(SQLException e)
+        {
+            
+        }
+        return false;
     }
     
 }

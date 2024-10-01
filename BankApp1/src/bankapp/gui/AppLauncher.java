@@ -9,8 +9,8 @@ import javax.swing.*;
 import obj.User;
 public class AppLauncher {
     public static void main(String[] args) {
-//        new LoginGui().setVisible(true);
-        new RegisterGui().setVisible(true);
+        new LoginGui().setVisible(true);
+//        new RegisterGui().setVisible(true);
 //        new BankingAppGui(new User(1,"username","password",new BigDecimal("10.00"))).setVisible(true);
 
     }

@@ -12,6 +12,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import obj.MyJDBC;
 public class RegisterGui extends BaseFrame
 {
@@ -97,10 +100,18 @@ public class RegisterGui extends BaseFrame
         add(RegisButton);
         
         //Register Label
-        JLabel registerLabel=new JLabel("<html><a href=\"#\">If you had an account , click here! ");
-        registerLabel.setBounds(super.getWidth()/2-160,super.getHeight()-150,super.getWidth(), 40);
-        registerLabel.setFont(new Font("Dialog",Font.BOLD,20));
-        add(registerLabel);
+        JLabel loginLabel=new JLabel("<html><a href=\"#\">If you had an account , click here! ");
+        loginLabel.setBounds(super.getWidth()/2-160,super.getHeight()-150,super.getWidth(), 40);
+        loginLabel.setFont(new Font("Dialog",Font.BOLD,20));
+        loginLabel.addMouseListener(new MouseAdapter()
+        {
+            @Override public void mouseClicked(MouseEvent e)
+            {
+                RegisterGui.this.dispose();
+                new LoginGui().setVisible(true);
+            }
+        });
+        add(loginLabel);
     }
     private boolean validRegis(String username,String password,String repassword)
     {
