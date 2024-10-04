@@ -200,5 +200,26 @@ public class MyJDBC {
         }
         return false;
     }
+    public static ArrayList<Transaction> getPastTransaction(User user)
+    {
+        ArrayList<Transaction> pastList=new ArrayList<>();
+        try
+        {
+            Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
+            PreparedStatement ppst=cnt.prepareStatement("SELECT * FROM transaction WHERE user_id=?");
+            ppst.setInt(1, user.getId());
+            ResultSet rs=ppst.executeQuery();
+            while(rs.next())
+            {
+                Transaction transaction=new Transaction(user.getId(),rs.getString("trans_type"),rs.getBigDecimal("trans_amount"),rs.getDate("trans_date"));
+                pastList.add(transaction);
+            }
+        }
+        catch(SQLException e)
+        {
+            
+        }
+        return pastList;
+    }
     
 }
