@@ -41,32 +41,7 @@ public class MyJDBC {
         }
         return null;
     }
-    public static boolean register(String username,String password)
-    {
-        
-        try
-        {
-            if(!checkUser(username))
-            {
-                int curr=countCus();
-                Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
-                PreparedStatement ppst= cnt.prepareStatement("INSERT INTO customer(id,username,pass,balance) VALUES(?,?,?,?)");
-                ppst.setInt(1, curr+1);
-                ppst.setString(2, username);
-                ppst.setString(3, password);
-                ppst.setBigDecimal(4, BigDecimal.ZERO);
-                int rowsAffected = ppst.executeUpdate(); // Sửa thành executeUpdate()
-                
-                return true;
-            }
-        }
-        catch(SQLException e)
-        {
-             System.err.println("SQL Exception occurred: " + e.getMessage());
-            e.printStackTrace();  // In toàn bộ lỗi SQL để xem chi tiết
-        }
-        return false;
-    }
+   
     public static boolean checkUser(String username)
     {
         try
@@ -220,6 +195,35 @@ public class MyJDBC {
             
         }
         return pastList;
+    }
+     public static boolean register(String username,String password)
+    {
+        
+        try
+        {
+            if(!checkUser(username))
+            {
+                int curr=countCus();
+                Connection cnt=DriverManager.getConnection(DB_URL,DB_Username,DB_Password);
+                PreparedStatement ppst= cnt.prepareStatement("INSERT INTO customer(id,username,pass,balance) VALUES(?,?,?,?)");
+                ppst.setInt(1, curr+1);
+                ppst.setString(2, username);
+                ppst.setString(3, password);
+                ppst.setBigDecimal(4, BigDecimal.ZERO);
+                int rowsAffected = ppst.executeUpdate(); // Sửa thành executeUpdate()
+                
+                return true;
+            }
+        }
+        catch(SQLException e)
+        {
+             System.err.println("SQL Exception occurred: " + e.getMessage());
+            e.printStackTrace();  // In toàn bộ lỗi SQL để xem chi tiết
+        }
+        return false;
+    }
+     public static void main(String[] args) {
+        MyJDBC.register("lam123456", "123456");
     }
     
 }

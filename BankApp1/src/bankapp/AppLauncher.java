@@ -4,9 +4,10 @@
  */
 package bankapp;
 
-import bankapp.gui.LoginGui;
+import bankapp.guis.LoginGui;
 import javax.swing.*;
-public class BankApp {
+
+public class AppLauncher {
 
     /**
      * @param args the command line arguments
@@ -14,5 +15,5 @@ public class BankApp {
     public static void main(String[] args) {
         new LoginGui().setVisible(true);
     }
-    
+
 }
